@@ -38,14 +38,19 @@ class Stim_Voltametry(QtWidgets.QWidget):
         self.repeat             = kwargs.get( 'repeat'             , int(float(self.ui_repeat_t.toPlainText())))             # count
         self.Vref               = kwargs.get( 'Vref'               , 0.9 )                                                   # Volts
 
-        self.time_waveFull = np.floor((self.stopVoltage - self.startVoltage) / self.stepVoltage) * (self.pulseWidth * 2)
+        if self.startVoltage > self.stopVoltage: direction = -1
+        else: direction = 1
+        self.stepVoltage = direction * np.abs(self.stepVoltage) # ensure is in direction of startVoltage to stopVoltage
+        self.pulseHeight = direction * np.abs(self.pulseHeight) # ensure is in direction of startVoltage to stopVoltage
+
+        self.time_waveFull = np.floor(np.abs((self.stopVoltage - self.startVoltage) / self.stepVoltage)) * (self.pulseWidth * 2)
 
         time_all = self.time_preTrial + self.time_postTrial
         time_all += self.time_waveFull + (self.repeat-1)*(self.time_waveFull + self.time_betweenTrial)
 
         amp = self.pulseHeight * 1.0 # calibration equation
 
-        stimPulse      = [amp]*int(self.pulseWidth*self.nidaq.fs) + [-amp]*int(self.pulseWidth*self.nidaq.fs)
+        stimPulse      = [ amp]*int(self.pulseWidth*self.nidaq.fs) + [ -amp]*int(self.pulseWidth*self.nidaq.fs)
         stimOnTemplate = [ 1 ]*int(self.pulseWidth*self.nidaq.fs) + [ -1 ]*int(self.pulseWidth*self.nidaq.fs)
         stimWave       = []
         stimOnWave     = []
@@ -55,17 +60,17 @@ class Stim_Voltametry(QtWidgets.QWidget):
             stimOnWave   += stimOnTemplate
             stimStepWave += [offset] * len(stimPulse)
 
-        stimVec1    = [0]*int(self.time_preTrial*self.nidaq.fs) + stimWave
-        stimOnVec   = [0]*int(self.time_preTrial*self.nidaq.fs) + stimOnWave
-        stimStepVec = [0]*int(self.time_preTrial*self.nidaq.fs) + stimStepWave
+        stimVec1    = [self.startVoltage]*int(self.time_preTrial*self.nidaq.fs) + stimWave
+        stimOnVec   = [self.startVoltage]*int(self.time_preTrial*self.nidaq.fs) + stimOnWave
+        stimStepVec = [self.startVoltage]*int(self.time_preTrial*self.nidaq.fs) + stimStepWave
         for i in range(self.repeat-1):
             time_between = int(self.time_betweenTrial * self.nidaq.fs)
-            stimVec1    += [0]*time_between + stimWave
-            stimOnVec   += [0]*time_between + stimOnWave
-            stimStepVec += [0]*time_between + stimStepWave
-        stimVec1    += [0]*int(time_all*self.nidaq.fs-len(stimVec1))
-        stimOnVec   += [0]*int(time_all*self.nidaq.fs-len(stimOnVec))
-        stimStepVec += [0]*int(time_all*self.nidaq.fs-len(stimStepVec))
+            stimVec1    += [self.stopVoltage]*time_between + stimWave
+            stimOnVec   += [self.stopVoltage]*time_between + stimOnWave
+            stimStepVec += [self.stopVoltage]*time_between + stimStepWave
+        stimVec1    += [self.stopVoltage]*int(time_all*self.nidaq.fs-len(stimVec1))
+        stimOnVec   += [self.stopVoltage]*int(time_all*self.nidaq.fs-len(stimOnVec))
+        stimStepVec += [self.stopVoltage]*int(time_all*self.nidaq.fs-len(stimStepVec))
 
         self.output_ch1 = np.array(stimVec1) + self.Vref
         self.output_ch2 = self.output_ch1.copy()
@@ -176,12 +181,12 @@ class Stim_Voltametry(QtWidgets.QWidget):
     def setDefaultParams(self):
         self.ui_time_preTrial_t.setText('1')
         self.ui_time_betweenTrial_t.setText('0.5')
-        self.ui_time_postTrial_t.setText('2')
+        self.ui_time_postTrial_t.setText('1')
         self.ui_repeat_t.setText('1')
         self.ui_pulseWidth_t.setText('17')
-        self.ui_startVoltage_t.setText('-200')
-        self.ui_stopVoltage_t.setText('600')
-        self.ui_stepVoltage_t.setText('5')
+        self.ui_startVoltage_t.setText('0')
+        self.ui_stopVoltage_t.setText('-400')
+        self.ui_stepVoltage_t.setText('4')
         self.ui_pulseHeight_t.setText('40')
         # self.ui_currentRange_t.setText('100')
 
