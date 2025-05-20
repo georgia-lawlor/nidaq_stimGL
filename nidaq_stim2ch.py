@@ -6,8 +6,8 @@ import time
 
 
 
-niDevice = 'PXI1Slot2'
-debug = True
+niDevice = 'Dev1'
+debug = False
 
 
 
@@ -56,13 +56,13 @@ class NIDAQ_Stim2ch():
         if channelOut is None:
             channelOut  = self.niDevice+"/ao0:1"
         if channelIn is None:
-            channelIn   = self.niDevice+"/ai0,"+self.niDevice+"/ai4,"+self.niDevice+"/ai16"
+            channelIn   = self.niDevice+"/ai0,"+self.niDevice+"/ai1,"+self.niDevice+"/ai16"
         channelTrig = self.niDevice+"/ai0" # Has to be self.niDevice+"/ai0" or "apfi0"
 
         # Configure Analog Pins
         with nidaqmx.Task() as write_task, nidaqmx.Task() as read_task:
-            write_task.ao_channels.add_ao_voltage_chan(channelOut)
-            read_task.ai_channels.add_ai_voltage_chan(channelIn)
+            write_task.ao_channels.add_ao_voltage_chan(channelOut, min_val=0, max_val=1.8)
+            read_task.ai_channels.add_ai_voltage_chan(channelIn, min_val=0, max_val=1.8)
             for task in (read_task, write_task):
                 task.timing.cfg_samp_clk_timing(rate=self.fs, source='OnboardClock', samps_per_chan=nsamples)
                 if waitForCamera:
@@ -77,7 +77,7 @@ class NIDAQ_Stim2ch():
 
             self.time_start = datetime.now()
             write_task.start()
-            [self.recording_ch1, self.recording_ch2, self.recording_ch3] = read_task.read(nsamples, timeout=self.time[-1] + self.time_waitUser )
+            [self.recording_ch1, self.recording_ch2, self.recording_ch3] = read_task.read(nsamples)#, timeout=self.time[-1] + self.time_waitUser )
             #TODO: is there a way to get timestamps from read?
             self.time_stop = datetime.now()
 

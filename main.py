@@ -16,7 +16,7 @@ class mainWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(mainWidget, self).__init__(parent)
         self.setWindowTitle("Livermore Square Wave Voltametry")
-        self.pathSave_default = os.path.join( '.', 'data_raw')
+        self.pathSave_default = "C://Users//georg//OneDrive - Johns Hopkins//Epileptogenesis//Scripts//Livermore"
         self.stimulation = None
         self.closing = False
         self.thread = None

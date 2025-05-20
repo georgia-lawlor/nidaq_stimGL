@@ -36,7 +36,7 @@ class Stim_Voltametry(QtWidgets.QWidget):
         self.time_betweenTrial  = kwargs.get( 'time_betweenTrial'  , float(self.ui_time_betweenTrial_t.toPlainText()))       # sec
         self.time_postTrial     = kwargs.get( 'time_postTrial'     , float(self.ui_time_postTrial_t.toPlainText()))          # sec
         self.repeat             = kwargs.get( 'repeat'             , int(float(self.ui_repeat_t.toPlainText())))             # count
-        self.Vref               = kwargs.get( 'Vref'               , 0.9 )                                                   # Volts
+        self.Vref               = kwargs.get( 'Vref'               , 0.8 )                                                   # Volts
 
         if self.startVoltage > self.stopVoltage: direction = -1
         else: direction = 1
@@ -185,7 +185,7 @@ class Stim_Voltametry(QtWidgets.QWidget):
         self.ui_repeat_t.setText('1')
         self.ui_pulseWidth_t.setText('17')
         self.ui_startVoltage_t.setText('0')
-        self.ui_stopVoltage_t.setText('-400')
+        self.ui_stopVoltage_t.setText('400')
         self.ui_stepVoltage_t.setText('4')
         self.ui_pulseHeight_t.setText('40')
         # self.ui_currentRange_t.setText('100')
