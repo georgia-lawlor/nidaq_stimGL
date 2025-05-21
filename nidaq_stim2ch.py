@@ -30,6 +30,7 @@ class NIDAQ_Stim2ch():
 
     def run(self, output_ch1, output_ch2, stimID=None, waitForCamera=False, channelOut=None, channelIn=None):
         self.time = np.arange(output_ch1.shape[-1]) / self.fs
+        self.time_waitUser = 30
         self.output_ch1      = output_ch1
         self.output_ch2      = output_ch2
         self.stimID          = stimID
@@ -61,8 +62,8 @@ class NIDAQ_Stim2ch():
 
         # Configure Analog Pins
         with nidaqmx.Task() as write_task, nidaqmx.Task() as read_task:
-            write_task.ao_channels.add_ao_voltage_chan(channelOut, min_val=0, max_val=1.8)
-            read_task.ai_channels.add_ai_voltage_chan(channelIn, min_val=0, max_val=1.8)
+            write_task.ao_channels.add_ao_voltage_chan(channelOut, min_val=-5, max_val=5)
+            read_task.ai_channels.add_ai_voltage_chan(channelIn, min_val=-5, max_val=5)
             for task in (read_task, write_task):
                 task.timing.cfg_samp_clk_timing(rate=self.fs, source='OnboardClock', samps_per_chan=nsamples)
                 if waitForCamera:
@@ -77,7 +78,7 @@ class NIDAQ_Stim2ch():
 
             self.time_start = datetime.now()
             write_task.start()
-            [self.recording_ch1, self.recording_ch2, self.recording_ch3] = read_task.read(nsamples)#, timeout=self.time[-1] + self.time_waitUser )
+            [self.recording_ch1, self.recording_ch2, self.recording_ch3] = read_task.read(nsamples, timeout=self.time[-1] + self.time_waitUser )
             #TODO: is there a way to get timestamps from read?
             self.time_stop = datetime.now()
 
@@ -92,7 +93,7 @@ class NIDAQ_Stim2ch():
 
         matVars['fs']           = self.fs
         matVars['data_output']  = np.concatenate(( self.output_ch1, self.output_ch2)).reshape(2,-1)
-        matVars['data_record']  = np.concatenate(( self.recording_ch1, self.recording_ch2, self.recording_ch3)).reshape(2,-1)
+        matVars['data_record']  = np.concatenate(( self.recording_ch1, self.recording_ch2, self.recording_ch3)).reshape(3,-1)
         matVars['time']         = self.time.reshape(1,-1)
         matVars['time_start']   = self.time_start.timestamp()
         matVars['time_stop']    = self.time_stop.timestamp()
