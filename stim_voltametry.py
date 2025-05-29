@@ -74,6 +74,7 @@ class Stim_Voltametry(QtWidgets.QWidget):
 
         self.output_ch1 = np.array(stimVec1) + self.Vref
         self.output_ch2 = self.output_ch1.copy()
+        self.output_ch3 = np.zeros(len(self.output_ch1)) + self.Vref
         self.stimOn     = np.array(stimOnVec)
         self.stimStep   = np.array(stimStepVec)
 
@@ -83,7 +84,7 @@ class Stim_Voltametry(QtWidgets.QWidget):
         if stimID is None:
             self.stim_cnt += 1
             stimID = self.stim_cnt
-        self.nidaq.run( self.output_ch1, self.output_ch2, stimID=stimID, waitForCamera=waitForCamera, channelIn=None)
+        self.nidaq.run( self.output_ch1, self.output_ch2, self.output_ch3, stimID=stimID, waitForCamera=waitForCamera, channelIn=None)
         print('Done.')
         if self.parent_nosave is not None:
             try:
@@ -133,8 +134,8 @@ class Stim_Voltametry(QtWidgets.QWidget):
         self.ui_time_postTrial_t           = helperFunctions_UI.makeTextBox( self.ui_main_gb)
         self.ui_repeat_l                   = helperFunctions_UI.makeLabel( 'Number Trials (count):', self.ui_main_gb)
         self.ui_repeat_t                   = helperFunctions_UI.makeTextBox( self.ui_main_gb)
-        self.ui_pulseWidth_l                = helperFunctions_UI.makeLabel( 'Puls Width (ms):', self.ui_main_gb)
-        self.ui_pulseWidth_t                = helperFunctions_UI.makeTextBox( self.ui_main_gb)
+        self.ui_pulseWidth_l               = helperFunctions_UI.makeLabel( 'Puls Width (ms):', self.ui_main_gb)
+        self.ui_pulseWidth_t               = helperFunctions_UI.makeTextBox( self.ui_main_gb)
 
         self.ui_startVoltage_l             = helperFunctions_UI.makeLabel( 'Start Voltage (mV):', self.ui_main_gb)
         self.ui_startVoltage_t             = helperFunctions_UI.makeTextBox( self.ui_main_gb)

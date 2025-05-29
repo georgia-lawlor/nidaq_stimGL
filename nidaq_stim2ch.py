@@ -22,17 +22,19 @@ class NIDAQ_Stim2ch():
         self.time            = None
         self.output_ch1      = None
         self.output_ch2      = None
+        self.output_ch3      = None
         self.recording_ch1   = None
         self.recording_ch2   = None
         self.recording_ch3   = None
         self.stimID          = None
 
 
-    def run(self, output_ch1, output_ch2, stimID=None, waitForCamera=False, channelOut=None, channelIn=None):
+    def run(self, output_ch1, output_ch2, output_ch3, stimID=None, waitForCamera=False, channelOut=None, channelIn=None):
         self.time = np.arange(output_ch1.shape[-1]) / self.fs
         self.time_waitUser = 30
         self.output_ch1      = output_ch1
         self.output_ch2      = output_ch2
+        self.output_ch3      = output_ch3
         self.stimID          = stimID
 
         if debug:
@@ -52,7 +54,7 @@ class NIDAQ_Stim2ch():
             return
 
         # Define Output Data
-        daqOutData  = np.concatenate(( self.output_ch1, self.output_ch2)).reshape(2,-1)
+        daqOutData  = np.concatenate(( self.output_ch1, self.output_ch2, self.output_ch3)).reshape(2,-1)
         nsamples    = daqOutData.shape[-1]
         if channelOut is None:
             channelOut  = self.niDevice+"/ao0:1"
@@ -92,7 +94,7 @@ class NIDAQ_Stim2ch():
         matVars = {}
 
         matVars['fs']           = self.fs
-        matVars['data_output']  = np.concatenate(( self.output_ch1, self.output_ch2)).reshape(2,-1)
+        matVars['data_output']  = np.concatenate(( self.output_ch1, self.output_ch2, self.output_ch3)).reshape(3,-1)
         matVars['data_record']  = np.concatenate(( self.recording_ch1, self.recording_ch2, self.recording_ch3)).reshape(3,-1)
         matVars['time']         = self.time.reshape(1,-1)
         matVars['time_start']   = self.time_start.timestamp()
@@ -112,6 +114,9 @@ class NIDAQ_Stim2ch():
         ax1 = plt.subplot(2,1,2,sharex=ax0)
         plt.plot(self.time, self.output_ch2, 'g')
         plt.ylabel("Channel 2 (V)")
+
+        plt.plot(self.time, self.output_ch3, 'r')
+        plt.ylabel("Channel 3 (V)")
         
         plt.show()
 
