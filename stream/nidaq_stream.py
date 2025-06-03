@@ -19,9 +19,9 @@ class mainWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
 
 
-        self.num_channels     = 2
-        self.defaultChannels  = ['ai4','ai5']
-        self.niDevice         = 'PXI1Slot2'
+        self.num_channels     = 3
+        self.defaultChannels  = ['ai0','ai1', 'ai16']
+        self.niDevice         = 'Dev1'
         self.plot_refreshRate = 20 # Hz
         self.fs               = 50e3 # Hz
         self.ai_channel_order = ['ai0','ai1','ai2','ai3','ai4','ai5','ai6','ai7','ai16','ai17','ai18','ai19','ai20','ai21','ai22','ai23']
@@ -703,4 +703,4 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     ui = mainWidget()
     ui.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

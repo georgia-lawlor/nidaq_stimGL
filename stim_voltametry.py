@@ -186,7 +186,7 @@ class Stim_Voltametry(QtWidgets.QWidget):
         self.ui_repeat_t.setText('1')
         self.ui_pulseWidth_t.setText('16')
         self.ui_startVoltage_t.setText('0')
-        self.ui_stopVoltage_t.setText('400')
+        self.ui_stopVoltage_t.setText('-400')
         self.ui_stepVoltage_t.setText('4')
         self.ui_pulseHeight_t.setText('40')
         # self.ui_currentRange_t.setText('100')

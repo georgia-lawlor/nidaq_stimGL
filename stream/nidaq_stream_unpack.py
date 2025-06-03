@@ -7,7 +7,7 @@ import sys
 import os
 
 
-path_raw = 'test_nidaq.bin'
+path_raw = 'data_raw/2025.06.03.14.43.17_nidaq.bin'
 
 
 def convert2mat(path, plot=True):

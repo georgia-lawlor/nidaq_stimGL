@@ -54,10 +54,10 @@ class NIDAQ_Stim2ch():
             return
 
         # Define Output Data
-        daqOutData  = np.concatenate(( self.output_ch1, self.output_ch2, self.output_ch3)).reshape(2,-1)
+        daqOutData  = np.concatenate(( self.output_ch1, self.output_ch2, self.output_ch3)).reshape(3,-1)
         nsamples    = daqOutData.shape[-1]
         if channelOut is None:
-            channelOut  = self.niDevice+"/ao0:1"
+            channelOut  = self.niDevice+"/ao0:2"
         if channelIn is None:
             channelIn   = self.niDevice+"/ai0,"+self.niDevice+"/ai1,"+self.niDevice+"/ai16"
         channelTrig = self.niDevice+"/ai0" # Has to be self.niDevice+"/ai0" or "apfi0"
